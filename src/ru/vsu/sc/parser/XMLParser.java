@@ -1,64 +1,14 @@
 package ru.vsu.sc.parser;
 
+import ru.vsu.sc.parser.utils.IndexWrapper;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
 public class XMLParser {
-    private static class IndexWrapper {
-        private int index = 0;
-        private final String data;
 
-        public IndexWrapper(String data) {
-            this.data = data.trim();
-        }
-
-        public Character charNow() {
-            return data.charAt(index);
-        }
-
-        public void next() {
-            index++;
-        }
-
-        public void back() {
-            index--;
-        }
-
-        private void skipSpaces() {
-            while (Character.isWhitespace(data.charAt(index))) next();
-        }
-
-        private int nextWhileNot(Character chr) {
-            /*
-            stays if now on chr.
-             */
-            while (!Objects.equals(charNow(), chr)) next();
-            return index;
-        }
-
-        private int backWhileNot(Character chr) {
-            /*
-            stays if now on chr.
-             */
-            while (!Objects.equals(charNow(), chr)) back();
-            return index;
-        }
-
-        public Character nextWhileNotIn(String str) {
-            while (!str.contains(String.valueOf(charNow()))) next();
-            return charNow();
-        }
-
-        public int getIndex() {
-            return index;
-        }
-
-        public String getData() {
-            return data;
-        }
-    }
 
     private Object map;
     public XMLParser(String filePath) {
@@ -105,7 +55,7 @@ public class XMLParser {
         iw.nextWhileNot('<');
         String curTag = parseTag(iw);
 
-        indexStack.add(iw.index);
+        indexStack.add(iw.getIndex());
         tagStack.add("/" + curTag);
         mapStack.add(toReturn);
         mapStack.add(new HashMap<>());
@@ -161,7 +111,7 @@ public class XMLParser {
                 //System.out.println(tagStack);
 
             } else {
-                indexStack.add(iw.index);
+                indexStack.add(iw.getIndex());
                 tagStack.add("/" + curTag);
                 mapStack.add(new HashMap<>());
 

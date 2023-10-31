@@ -14,8 +14,29 @@ public class Main {
     }
 
     public static void testJSON2() {
-        Object jsonMap = JSONParser.parseJSON("src/ru/vsu/sc/parser/File/data2.json");
-        myPrint(jsonMap, 0);
+        JSONParser parser = new JSONParser();
+        parser.parseByFileName("src/ru/vsu/sc/parser/File/data2.json");
+
+        myPrint(parser.parsedJSON, 0);
+
+        Object result;
+
+        System.out.println("1-".repeat(20));
+        result = parser.byKey("catalogs");
+        myPrint(result);
+
+        System.out.println("2-".repeat(20));
+        result = parser.byKey("catalogs").byIndex(0);
+        myPrint(result);
+
+        System.out.println("3-".repeat(20));
+        result = parser.byKey("catalogs").byIndex(0).byKey("conditions");
+        myPrint(result);
+
+        System.out.println("4-".repeat(20));
+        result = parser.byKey("catalogs").byIndex(0).byKey("conditions").open();
+        myPrint(result);
+
     }
 
     public static void testCSV1() {
@@ -43,13 +64,16 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        testXML1();
+        //testXML1();
         //testCSV1();
         //testJSON1();
         //testJSON2();
 
     }
 
+    public static void myPrint(Object o) {
+        myPrint(o, 0);
+    }
     public static void myPrint(Object o, int n) {
         if (o instanceof Map<?, ?>) {
             Map<String, Object> map = (Map<String, Object>) o;

@@ -1,51 +1,29 @@
 package ru.vsu.sc.parser;
 
+import ru.vsu.sc.parser.utils.*;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
 
 public class JSONParser {
-    private static class IndexWrapper {
-        private int index = 0;
-        private final String data;
 
-        public IndexWrapper(String data) {
-            this.data = data.trim();
-        }
+    Object parsedJSON;
 
-        public Character charNow() {
-            return data.charAt(index);
-        }
+    public void parseByData(String data) {
+        parsedJSON = parseJSONbyData(data);
+    }
 
-        public void next() {
-            index++;
-        }
+    public void parseByFileName(String filename) {
+        parsedJSON = parseJSON(filename);
+    }
 
-        private void skipSpaces() {
-            while (Character.isWhitespace(data.charAt(index))) next();
-        }
+    public JsonObject byKey(String key) {
+        return ((JsonSpecialMap<String, JsonObject>) parsedJSON).get(key);
+    }
 
-        private int nextWhileNot(Character chr) {
-            /*
-            stays if now on chr.
-             */
-            while (!Objects.equals(charNow(), chr)) next();
-            return index;
-        }
-
-        public Character nextWhileNotIn(String str) {
-            while (!str.contains(String.valueOf(charNow()))) next();
-            return charNow();
-        }
-
-        public int getIndex() {
-            return index;
-        }
-
-        public String getData() {
-            return data;
-        }
+    public JsonObject byIndex(int i) {
+        return ((JsonSpecialList<JsonObject>) parsedJSON).get(i);
     }
 
     private static String readFile(String filePath) {
@@ -70,8 +48,8 @@ public class JSONParser {
         return parseValue(new IndexWrapper(jsonData));
     }
 
-    private static Map<String, Object> parseMap(IndexWrapper iw) {
-        Map<String, Object> jsonMap = new LinkedHashMap<>();
+    private static JsonSpecialMap<String, JsonObject> parseMap(IndexWrapper iw) {
+        JsonSpecialMap<String, JsonObject> jsonMap = new JsonSpecialMap<>();
 
         // value
         int indexSave;
@@ -86,7 +64,7 @@ public class JSONParser {
             iw.nextWhileNot(':');
             iw.next();
             iw.skipSpaces();
-            Object value = parseValue(iw);
+            JsonObject value = parseValue(iw);
             // Adding
             jsonMap.put(key, value);
             iw.skipSpaces();
@@ -95,16 +73,16 @@ public class JSONParser {
         return jsonMap;
     }
 
-    private static Object parseValue(IndexWrapper iw) {
+    private static JsonObject parseValue(IndexWrapper iw) {
         iw.skipSpaces();
         Character chr = iw.charNow();
         if (chr == '[') return parseList(iw);
         if (chr == '{') return parseMap(iw);
-        return parsePrimitiveValue(iw);
+        return new JsonObjectBox(parsePrimitiveValue(iw));
     }
 
-    private static ArrayList<Object> parseList(IndexWrapper iw) {
-        ArrayList<Object> list = new ArrayList<>();
+    private static JsonSpecialList<JsonObject> parseList(IndexWrapper iw) {
+        JsonSpecialList<JsonObject> list = new JsonSpecialList<>();
         iw.next();
         iw.skipSpaces();
         while (iw.charNow() != ']') {
@@ -118,7 +96,7 @@ public class JSONParser {
     }
 
     private static String parseString(IndexWrapper iw) {
-        int indexStart = iw.index;
+        int indexStart = iw.getIndex();
         boolean beforeIsBackSlash = false;
         if (iw.charNow() != '"') throw new RuntimeException("Must starts with (\" )");
         iw.next();
