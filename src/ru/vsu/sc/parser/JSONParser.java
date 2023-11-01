@@ -19,11 +19,11 @@ public class JSONParser {
     }
 
     public JsonObject byKey(String key) {
-        return ((JsonSpecialMap<String, JsonObject>) parsedJSON).get(key);
+        return parsedJSON.byKey(key);
     }
 
     public JsonObject byIndex(int i) {
-        return ((JsonSpecialList<JsonObject>) parsedJSON).get(i);
+        return parsedJSON.byIndex(i);
     }
 
     private static String readFile(String filePath) {
