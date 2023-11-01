@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class JSONParser {
 
-    Object parsedJSON;
+    public JsonObject parsedJSON;
 
     public void parseByData(String data) {
         parsedJSON = parseJSONbyData(data);
@@ -39,12 +39,12 @@ public class JSONParser {
         return content.toString();
     }
 
-    public static Object parseJSON(String filePath) {
+    public static JsonObject parseJSON(String filePath) {
         String jsonData = readFile(filePath);
         return parseJSONbyData(jsonData);
     }
 
-    private static Object parseJSONbyData(String jsonData) {
+    private static JsonObject parseJSONbyData(String jsonData) {
         return parseValue(new IndexWrapper(jsonData));
     }
 

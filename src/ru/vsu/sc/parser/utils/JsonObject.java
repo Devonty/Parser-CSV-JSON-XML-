@@ -10,4 +10,5 @@ public interface JsonObject{
     default Object open(){
         throw new RuntimeException("(JsonObject) Cannot be opened");
     }
+
 }

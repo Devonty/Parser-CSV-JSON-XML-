@@ -9,15 +9,16 @@ import java.util.Map;
 public class Main {
 
     public static void testJSON1() {
-        Object jsonMap = JSONParser.parseJSON("src/ru/vsu/sc/parser/File/data1.json");
-        myPrint(jsonMap, 0);
+        JSONParser parser = new JSONParser();
+        parser.parseByFileName("src/ru/vsu/sc/parser/File/data1.json") ;
+        myPrint(parser.parsedJSON);
     }
 
     public static void testJSON2() {
         JSONParser parser = new JSONParser();
         parser.parseByFileName("src/ru/vsu/sc/parser/File/data2.json");
 
-        myPrint(parser.parsedJSON, 0);
+        myPrint(parser.parsedJSON);
 
         Object result;
 
@@ -66,7 +67,7 @@ public class Main {
     public static void main(String[] args) {
         //testXML1();
         //testCSV1();
-        //testJSON1();
+        testJSON1();
         //testJSON2();
 
     }

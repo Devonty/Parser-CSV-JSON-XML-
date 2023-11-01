@@ -1,6 +1,6 @@
 package ru.vsu.sc.parser.utils;
 
-public class JsonObjectBox implements JsonObject{
+public class JsonObjectBox implements JsonObject {
     Object object;
 
     public JsonObjectBox(Object object) {
@@ -11,7 +11,8 @@ public class JsonObjectBox implements JsonObject{
         return object;
     }
 
-    public Object open(){
+    @Override
+    public Object open() {
         return getObject();
     }
 
@@ -21,19 +22,19 @@ public class JsonObjectBox implements JsonObject{
 
     @Override
     public String toString() {
-        return "ObjectBox{" +
+        return "JsonObjectBox{" +
                 "object=" + object +
                 '}';
     }
 
     @Override
     public JsonObject byIndex(int i) {
-        throw new IllegalArgumentException("(ObjectBox) Not possible get by index");
+        throw new IllegalArgumentException("(JsonObjectBox) Not possible get by index");
     }
 
     @Override
     public JsonObject byKey(String key) {
-        throw new IllegalArgumentException("(ObjectBox) Not possible get by key");
+        throw new IllegalArgumentException("(JsonObjectBox) Not possible get by key");
 
     }
 }

@@ -2,12 +2,12 @@ package ru.vsu.sc.parser.utils;
 
 import java.util.HashMap;
 
-public class JsonSpecialMap<K, V extends JsonObject> extends HashMap<K, V> implements JsonObject {
+public class JsonSpecialMap<K extends String, V extends JsonObject> extends HashMap<K, V> implements JsonObject {
 
 
     @Override
     public JsonObject byIndex(int i) {
-        throw new IllegalArgumentException("(SpecialMap) Not possible get by index");
+        throw new IllegalArgumentException("(JsonSpecialMap) Not possible get by index");
     }
 
     @Override
