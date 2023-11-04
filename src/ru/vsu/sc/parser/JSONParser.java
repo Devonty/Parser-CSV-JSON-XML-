@@ -6,7 +6,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class JSONParser {
+public class JSONParser implements JsonObject{
 
     public JsonObject parsedJSON;
 
