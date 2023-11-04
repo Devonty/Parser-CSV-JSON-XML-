@@ -1,18 +1,27 @@
 package ru.vsu.sc.parser;
 
-import ru.vsu.sc.parser.utils.IndexWrapper;
+import ru.vsu.sc.parser.utils.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-public class XMLParser {
-
-
-    private Object map;
+public class XMLParser implements XmlObject{
+    private final XmlObject map;
     public XMLParser(String filePath) {
         this.map = parseXML(filePath);
+    }
+
+
+    @Override
+    public XmlObject byIndex(int i) {
+        return map.byIndex(i);
+    }
+
+    @Override
+    public XmlObject byKey(String key) {
+        return map.byKey(key);
     }
 
     private static String readFile(String filePath) {
@@ -28,12 +37,12 @@ public class XMLParser {
         return content.toString();
     }
 
-    private static Object parseXML(String filePath) {
+    private static XmlObject parseXML(String filePath) {
         String xmlData = readFile(filePath);
         return parseXMLbyData(xmlData);
     }
 
-    private static Object parseXMLbyData(String xmlData) {
+    private static XmlObject parseXMLbyData(String xmlData) {
         return parseXML(new IndexWrapper(xmlData));
     }
 
@@ -44,13 +53,13 @@ public class XMLParser {
         return iw.getData().substring(indexStart + 1, iw.getIndex());
     }
 
-    private static Object parseXML(IndexWrapper iw) {
+    private static XmlObject parseXML(IndexWrapper iw) {
         Stack<String> tagStack = new Stack<>();
         Stack<Integer> indexStack = new Stack<>();
-        Stack<Map<String, List<Object>>> mapStack = new Stack<>();
+        Stack<XmlSpecialMap<String, XmlSpecialList<XmlObject>>> mapStack = new Stack<>();
 
 
-        Map<String, List<Object>> toReturn = new HashMap<>();
+        XmlSpecialMap<String, XmlSpecialList<XmlObject>> toReturn = new XmlSpecialMap<>();
 
         iw.nextWhileNot('<');
         String curTag = parseTag(iw);
@@ -58,7 +67,7 @@ public class XMLParser {
         indexStack.add(iw.getIndex());
         tagStack.add("/" + curTag);
         mapStack.add(toReturn);
-        mapStack.add(new HashMap<>());
+        mapStack.add(new XmlSpecialMap<>());
 
         //System.out.println(curTag);
 
@@ -86,19 +95,19 @@ public class XMLParser {
 
                 if (indexLast == indexStack.peek()) {
                     mapStack.pop();
-                    Object value = parsePrimitiveValue(iw.getData().substring(indexStart + 1, indexEnd));
+                    XmlObject value = new XmlObjectBox(parsePrimitiveValue(iw.getData().substring(indexStart + 1, indexEnd)));
 
 
-                    List<Object> lst =  mapStack.peek().getOrDefault(realTag, new ArrayList<>());
+                    XmlSpecialList<XmlObject> lst =  mapStack.peek().getOrDefault(realTag, new XmlSpecialList<>());
                     lst.add(value);
                     mapStack.peek().put(realTag, lst);
 
                     //System.out.println("value : " + value);
                 } else {
                     // need mapToAdd add
-                    Map<String, List<Object>> mapToAdd = mapStack.pop();
+                    XmlSpecialMap<String, XmlSpecialList<XmlObject>> mapToAdd = mapStack.pop();
 
-                    List<Object> lst = mapStack.peek().getOrDefault(realTag, new ArrayList<>());
+                    XmlSpecialList<XmlObject> lst =  mapStack.peek().getOrDefault(realTag, new XmlSpecialList<>());
                     lst.add(mapToAdd);
                     mapStack.peek().put(realTag, lst);
                 }
@@ -113,7 +122,7 @@ public class XMLParser {
             } else {
                 indexStack.add(iw.getIndex());
                 tagStack.add("/" + curTag);
-                mapStack.add(new HashMap<>());
+                mapStack.add(new XmlSpecialMap<>());
 
                 //System.out.println("Новый");
                 //System.out.println(tagStack);
@@ -171,5 +180,12 @@ public class XMLParser {
 
     public Object getMap() {
         return map;
+    }
+
+    @Override
+    public String toString() {
+        return "XMLParser{" +
+                "map=" + map +
+                '}';
     }
 }
