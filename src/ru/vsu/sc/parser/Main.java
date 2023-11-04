@@ -1,6 +1,9 @@
 package ru.vsu.sc.parser;
 
 
+import ru.vsu.sc.parser.utils.XmlObject;
+import ru.vsu.sc.parser.utils.XmlSpecialList;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +50,7 @@ public class Main {
         parser.parseCSV();
     }
 
-    public static void testXML1() {
+    public static void testXML1Old() {
         XMLParser xmlParser = new XMLParser("src/ru/vsu/sc/parser/File/data2.xml");
         myPrint(xmlParser.getMap(), 0);
 
@@ -64,10 +67,39 @@ public class Main {
         System.out.println('"' + keyLine + '"' + " : " +  '"' +xmlParser.getByKeyLine(keyLine) + '"');
     }
 
+    public static void testXML1() {
+        XMLParser xmlParser = new XMLParser("src/ru/vsu/sc/parser/File/data2.xml");
+        myPrint(xmlParser.getMap(), 0);
+
+        Object result;
+
+        System.out.println("1-".repeat(20));
+        result = xmlParser.byKey("PurchaseOrder");
+        myPrint(result);
+
+        System.out.println("2-".repeat(20));
+        result = xmlParser.byKey("PurchaseOrder").byKey("Address");
+        myPrint(result);
+
+        System.out.println("3-".repeat(20));
+        result = xmlParser.byKey("PurchaseOrder").byKey("Address").byIndex(0);
+        myPrint(result);
+
+        System.out.println("4-".repeat(20));
+        result = xmlParser.byKey("PurchaseOrder").byKey("Address").byIndex(0).byKey("Zip");
+        myPrint(result);
+
+        System.out.println("5-".repeat(20));
+        result = xmlParser.byKey("PurchaseOrder").byKey("Address").byIndex(0).byKey("Zip").open();
+        myPrint(result);
+
+
+    }
+
     public static void main(String[] args) {
-        //testXML1();
+        testXML1();
         //testCSV1();
-        testJSON1();
+        //testJSON1();
         //testJSON2();
 
     }
